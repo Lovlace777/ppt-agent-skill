@@ -279,7 +279,7 @@ def phase0_check_skill() -> dict:
     """Phase 0: 跑 check_skill.py 检查 SKILL.md/cheatsheet/scripts 三方一致性。"""
     results = {"phase": 0, "check_skill": {}, "summary": {"pass": 0, "fail": 0, "warn": 0}}
     cs = subprocess.run(
-        ["python3", str(ROOT / "scripts" / "check_skill.py")],
+        [sys.executable, str(ROOT / "scripts" / "check_skill.py")],
         capture_output=True, text=True, timeout=60
     )
     out = cs.stdout
@@ -342,7 +342,7 @@ def phase5_e2e_tests(style_filter: str = None) -> dict:
 
     # 1. html_packager
     pkg_result = subprocess.run(
-        ["python3", str(ROOT / "scripts" / "html_packager.py"),
+        [sys.executable, str(ROOT / "scripts" / "html_packager.py"),
          str(slides_dir), "-o", str(e2e_dir / "preview.html")],
         capture_output=True, text=True, timeout=60
     )
@@ -358,7 +358,7 @@ def phase5_e2e_tests(style_filter: str = None) -> dict:
 
     # 2. html2svg
     svg_result = subprocess.run(
-        ["python3", str(ROOT / "scripts" / "html2svg.py"),
+        [sys.executable, str(ROOT / "scripts" / "html2svg.py"),
          str(slides_dir), "-o", str(svg_dir)],
         capture_output=True, text=True, timeout=300
     )
@@ -375,7 +375,7 @@ def phase5_e2e_tests(style_filter: str = None) -> dict:
 
     # 3. svg2pptx
     pptx_result = subprocess.run(
-        ["python3", str(ROOT / "scripts" / "svg2pptx.py"),
+        [sys.executable, str(ROOT / "scripts" / "svg2pptx.py"),
          str(svg_dir), "-o", str(e2e_dir / "presentation.pptx")],
         capture_output=True, text=True, timeout=120
     )

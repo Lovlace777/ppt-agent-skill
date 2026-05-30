@@ -16,10 +16,23 @@
 
 import json
 import os
+import platform
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+
+def _npm_cmd():
+    if platform.system() == "Windows":
+        return "npm.cmd"
+    return "npm"
+
+
+def _npx_cmd():
+    if platform.system() == "Windows":
+        return "npx.cmd"
+    return "npx"
 
 # Puppeteer + dom-to-svg bundle 注入脚本
 CONVERT_SCRIPT = r"""
@@ -455,7 +468,7 @@ def ensure_deps(work_dir: Path) -> tuple:
     )
     if r.returncode != 0:
         print("Installing puppeteer...")
-        subprocess.run(["npm", "install", "puppeteer"],
+        subprocess.run([_npm_cmd(), "install", "puppeteer"],
                        capture_output=True, text=True, timeout=180, cwd=str(work_dir))
 
     # dom-to-svg
@@ -465,7 +478,7 @@ def ensure_deps(work_dir: Path) -> tuple:
     )
     if r.returncode != 0:
         print("Installing dom-to-svg...")
-        subprocess.run(["npm", "install", "dom-to-svg"],
+        subprocess.run([_npm_cmd(), "install", "dom-to-svg"],
                        capture_output=True, text=True, timeout=60, cwd=str(work_dir))
         r = subprocess.run(
             ["node", "-e", "require('dom-to-svg')"],
@@ -483,7 +496,7 @@ def ensure_deps(work_dir: Path) -> tuple:
         entry_path = work_dir / ".bundle_entry.js"
         entry_path.write_text(BUNDLE_ENTRY)
         r = subprocess.run(
-            ["npx", "-y", "esbuild", str(entry_path),
+            [_npx_cmd(), "-y", "esbuild", str(entry_path),
              "--bundle", "--format=iife",
              f"--outfile={bundle_path}", "--platform=browser"],
             capture_output=True, text=True, timeout=60, cwd=str(work_dir)

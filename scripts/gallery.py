@@ -17,10 +17,17 @@
 
 import argparse
 import json
+import platform
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+
+def _npm_cmd():
+    if platform.system() == "Windows":
+        return "npm.cmd"
+    return "npm"
 
 ROOT = Path(__file__).resolve().parent.parent
 STYLES_DIR = ROOT / "references" / "styles"
@@ -385,7 +392,7 @@ def take_screenshots(styles: list) -> bool:
         # 如果都没装，在项目根装一个
         work_dir = ROOT
         print("Installing puppeteer in project root...")
-        subprocess.run(["npm", "install", "puppeteer"],
+        subprocess.run([_npm_cmd(), "install", "puppeteer"],
                       capture_output=True, text=True, timeout=180, cwd=str(work_dir))
 
     script_path = work_dir / ".gallery_screenshot.cjs"
